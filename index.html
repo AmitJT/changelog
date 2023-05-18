@@ -1,31 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>README.md Viewer</title>
-  <script src="https://cdn.jsdelivr.net/npm/showdown@1.10.2/dist/showdown.min.js"></script>
-   <style>
-    #readme-container{
-        border: 1px solid black;
-        height: 500px;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JohnnetteGCS Changelog</title>
+ 
+  <script src="showdown-2.1.0/dist/showdown.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+  
+
 </head>
 <body>
-  <div id="readme-container"></div>
+  <div id="readme-list"></div>
+
+  <div id="readmes-container"></div>
 
   <script>
-    // Fetch README.md content
-    fetch('./README.md')
-      .then(response => response.text())
-      .then(markdown => {
-        // Convert Markdown to HTML
-        const converter = new showdown.Converter();
-        const html = converter.makeHtml(markdown);
+    const readmeFiles = [
+      {
+        path: './README.md',
+        title: 'v1.3.1 beta 1.1',
+        releaseDate: ' '
+      },
 
-        // Display HTML in the container
-        document.getElementById('readme-container').innerHTML = html;
-      })
-      .catch(error => console.error(error));
+
+    ];
+
+    function fetchAndDisplayReadme(url, title, releaseDate) {
+      fetch(url)
+        .then(response => response.text())
+        .then(markdown => {
+ 
+          const converter = new showdown.Converter();
+          const html = converter.makeHtml(markdown);
+
+
+          const readmeContainer = document.createElement('div');
+          readmeContainer.className = 'readme-container';
+          readmeContainer.innerHTML = html;
+
+     
+          document.getElementById('readmes-container').appendChild(readmeContainer);
+
+
+          const readmeLink = document.createElement('a');
+          readmeLink.className = 'readme-link';
+          readmeLink.textContent = title;
+          readmeLink.addEventListener('click', () => {
+            readmeContainer.scrollIntoView({ behavior: 'smooth' });
+          });
+
+  
+          document.getElementById('readme-list').appendChild(readmeLink);
+
+
+          const releaseDateElement = document.createElement('div');
+          releaseDateElement.className = 'release-date';
+          releaseDateElement.textContent = `Release Date: ${releaseDate}`;
+
+
+          document.getElementById('readme-list').appendChild(releaseDateElement);
+
+
+          const goTopButton = document.createElement('button');
+          goTopButton.className = 'go-top-button';
+          goTopButton.textContent = 'Go on top';
+          goTopButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+
+          readmeContainer.appendChild(goTopButton);
+        })
+        .catch(error => console.error(error));
+    }
+
+
+    readmeFiles.forEach(({ path, title, releaseDate }) => fetchAndDisplayReadme(path, title, releaseDate));
   </script>
 </body>
 </html>
